@@ -19,8 +19,15 @@ app.get('/config', (req, res) => {
 });
 
 app.get('/SearchForAlbum', (req, res) => {
-    databaseService.searchForAlbum().then(retval => {
-        console.log(retval)
+
+    let name = req.query['name'];
+    let city = req.query['city'];
+    let state = req.query['state'];
+    let country = req.query['country'];
+    let firstDate = req.query['firstDate'];
+    let lastDate = req.query['lastDate'];
+
+    databaseService.searchForAlbum(name, city, state, country, firstDate, lastDate).then(retval => {
         res.send(retval);
     });
 });
