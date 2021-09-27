@@ -45,12 +45,3 @@ class DatabaseService {
 }
 
 module.exports = DatabaseService;
-
-
-/**
- * OR
-	                ("City" LIKE '%$2%' AND '$2' != '' AND '$2' != null) OR
-	                ("State" LIKE '%$3%' AND '$3' != '' AND '$3' != null) OR
-	                ("Country" LIKE '%$4%' AND '$4' != '' AND '$4' != null) OR
-	                ("CreationDate" >= $5 AND "CreationDate" <= $6);
- */
