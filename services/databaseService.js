@@ -1,34 +1,27 @@
 var pgp = require('pg-promise')(/* options */);
 var db = pgp('postgres://postgres:postgresql@localhost:5432/VirtualPhotoAlbum');
-const {ParameterizedQuery: PQ} = require('pg-promise');
+const { ParameterizedQuery: PQ } = require('pg-promise');
 
 class DatabaseService {
 
-    searchForAlbum(name, city, state, country, firstDate, lastDate) {
+    searchForAlbum(searchValue) {
 
-        const minDate = new Date(-130000000000000);
-        const maxDate = new Date(130000000000000);
+        let args = [];
+        args.push('%' + searchValue + '%');
 
-        if (typeof firstDate === "undefined") { firstDate = minDate; }
-        if (typeof lastDate === "undefined") { lastDate = maxDate; }
+        let string = `
+        SELECT
+            al."Name",
+            al."Id",
+            ( SELECT "FilePath" FROM "Photos" ph WHERE ph."AlbumId" = al."Id" LIMIT 1 )
+        FROM "Albums" al
+        WHERE 
+            UPPER("Name") LIKE UPPER($1)
+            OR UPPER("City") LIKE UPPER($1)
+            OR UPPER("State") LIKE UPPER($1)
+            OR UPPER("Country") LIKE UPPER($1);`;
 
-        let args = [name, city, state, country, firstDate, lastDate];
-
-        const searchForAlbum = new PQ(`
-            SELECT 
-                "Name",
-                "Id",
-                "CreationDate",
-                "City",
-                "State",
-                "Country" 
-            FROM public."Albums" 
-            WHERE 
-                ("Name" LIKE '%$1::text%' AND $1::text != '' AND $1::text != null)  
-                OR ("City" LIKE '%$2::text%' AND $2::text != '' AND $2::text != null)
-	            OR ("State" LIKE '%$3::text%' AND $3::text != '' AND $3::text != null)
-	            OR ("Country" LIKE '%$4::text%' AND $4::text != '' AND $4::text != null)
-	            OR ("CreationDate" >= $5::date AND "CreationDate" <= $6::date)`);
+        const searchForAlbum = new PQ(string);
 
         searchForAlbum.values = args;
 
