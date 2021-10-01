@@ -16,16 +16,20 @@ app.get('/hello', (req, res) => {
     res.send('hello world')
 });
 
-app.get('/config', (req, res) => {
-    console.log(process.env.DB_HOST);
-    res.send(process.env.DB_HOST);
-});
-
 app.get('/SearchForAlbum', (req, res) => {
 
     let searchValue = req.query['searchValue'];
 
     databaseService.searchForAlbum(searchValue).then(retval => {
+        res.send(retval);
+    });
+});
+
+app.get('/GetAlbum', (req, res) => {
+
+    let albumId = req.query['albumId'];
+
+    databaseService.getAlbum(albumId).then(retval => {
         res.send(retval);
     });
 });

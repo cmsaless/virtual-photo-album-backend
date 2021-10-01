@@ -35,6 +35,33 @@ class DatabaseService {
                 });
         });
     }
+
+    getAlbum(albumId) {
+
+        let args = [];
+        args.push(albumId);
+
+        let string = `
+        SELECT
+            al."Name", ph."AlbumId", ph."Id", ph."Caption", ph."FilePath"
+	    FROM public."Photos" ph JOIN public."Albums" al
+        ON al."Id" = ph."AlbumId"
+	    WHERE "AlbumId" = $1;`;
+
+        const searchForAlbum = new PQ(string);
+        searchForAlbum.values = args;
+
+        return new Promise(resolve => {
+            db.query(searchForAlbum)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((error) => {
+                    console.log('ERROR:', error);
+                });
+        });
+    }
+
 }
 
 module.exports = DatabaseService;
